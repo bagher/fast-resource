@@ -13,7 +13,6 @@
 ### Quick Start
 
 ```python
-from typing import Dict
 from fast_resource import Resource
 
 
@@ -24,7 +23,7 @@ class UserResource(Resource):
             'name',
         )
 
-    def name(self, input_data: Dict) -> str:
+    def name(self, input_data) -> str:
         return f'{input_data["name"]} {input_data["family"]}'
 
 
@@ -36,7 +35,6 @@ UserResource({'id': 1, 'name': 'bagher', 'family': 'rokni'}).to_dict(('id',))
 ```
 ### Use cache decoder
 ```python
-from typing import Dict
 from redis.client import Redis
 from fast_resource import Resource, cache
 from fast_resource.cache import RedisCache
@@ -54,7 +52,7 @@ class PostResource(Resource):
         )
 
     @cache(key=my_key_builder)
-    def comment_count(self, input_data: Dict) -> str:
+    def comment_count(self, input_data) -> str:
         return comment.filter(id=input_data['id']).count()
 
 
@@ -63,9 +61,9 @@ PostResource({'id': 1, 'title': 'Why fast-resource?'}).to_dict()
 ```
 ### Custom cache expire_time
 ```python
-    @cache(key=my_key_builder, expire_time=60)
-    def comment_count(self, input_data: Dict) -> str:
-        return comment.filter(id=input_data['id']).count()
+@cache(key=my_key_builder, expire_time=60)
+def comment_count(self, input_data) -> str:
+    return comment.filter(id=input_data['id']).count()
 ```
 ### Cache delete
 ```python
@@ -78,7 +76,7 @@ PostResource({'id': 1, 'name': 'bagher', 'family': 'rokni'}).cache_delete(rebuil
 
 ### Cache delete by keys
 ```python
-PostResource.cache_delete(['post.1.comment_count'])
+PostResource.cache_delete_by_keys(['post.1.comment_count'])
 ```
 
 ### Create collection
