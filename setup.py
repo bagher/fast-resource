@@ -13,5 +13,5 @@ setup(
     long_description=open('README.md').read(),
     install_requires=['redis', 'pymemcache'],
     long_description_content_type='text/markdown',
-    python_requires='>=3.11',
+    python_requires='>=3.*',
 )
