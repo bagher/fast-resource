@@ -52,7 +52,7 @@ class PostResource(Resource):
         )
 
     @cache(key=my_key_builder)
-    def comment_count(self, input_data) -> str:
+    def comment_count(self, input_data) -> int:
         return comment.filter(id=input_data['id']).count()
 
 
@@ -62,7 +62,7 @@ PostResource({'id': 1, 'title': 'Why fast-resource?'}).to_dict()
 ### Custom cache expire_time
 ```python
 @cache(key=my_key_builder, expire_time=60)
-def comment_count(self, input_data) -> str:
+def comment_count(self, input_data) -> int:
     return comment.filter(id=input_data['id']).count()
 ```
 ### Cache delete
@@ -83,7 +83,8 @@ PostResource.cache_delete_by_keys(['post.1.comment_count'])
 ```python
 user_collection = UserResource.collection([
     {'id': 1, 'name': 'bagher', 'family': 'rokni'},
-    {'id': 2, 'name': 'sepehr', 'family': 'rokni'}
+    {'id': 2, 'name': 'sepehr', 'family': 'rokni'},
+    {'id': 3, 'name': 'sama', 'family': 'rokni'},
 ])
 user_collection.to_dict()
 ```
