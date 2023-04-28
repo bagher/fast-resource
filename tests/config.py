@@ -3,11 +3,13 @@ from fast_resource import Resource
 inputs = {
     'bagher': {'id': 1, 'name': 'Bagher', 'family': 'Rokni'},
     'sepehr': {'id': 2, 'name': 'Sepehr', 'family': 'Rokni'},
+    'sama': {'id': 3, 'name': 'Sama', 'family': 'Rokni'},
 }
 
 outputs = {
     'bagher': {'id': 1, 'name': 'Bagher Rokni'},
     'sepehr': {'id': 2, 'name': 'Sepehr Rokni'},
+    'sama': {'id': 3, 'name': 'Sama Rokni'},
 }
 
 
