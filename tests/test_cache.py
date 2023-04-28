@@ -1,7 +1,7 @@
 import time
 from fast_resource import Resource, cache
 import unittest
-from fast_resource.cache import RedisCache, MemcachedClient
+from fast_resource.cache import RedisCache, MemcachedCache
 from redis.client import Redis
 from .config import UserResource, inputs
 from pymemcache.client.base import Client
@@ -9,7 +9,7 @@ from pymemcache.client.base import Client
 
 class TestResourceCache(unittest.TestCase):
     def setUp(self):
-        self.cache = MemcachedClient(Client(server='127.0.0.1:11211'))
+        self.cache = MemcachedCache(Client(server='127.0.0.1:11211'))
         Resource.cache_init(driver=self.cache, prefix='resources.test')
         self.user = UserResource(inputs['bagher'])
         self.users = UserResource.collection(inputs.values())
