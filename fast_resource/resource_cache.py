@@ -50,7 +50,9 @@ class ResourceCache:
         if not self.cache_fields_alias:
             fields = self.__get_cache_fields_config()
             for index, field in fields.items():
-                key = field['key'] if isinstance(field['key'], str) else field['key'](self.input_data, index)
+                key = field.get('key')
+                if callable(key):
+                    key = key(self.input_data, index)
                 self.cache_fields_alias[index] = f'{self.cache_prefix}.{key}'
         return self.cache_fields_alias[field_name] if field_name else self.cache_fields_alias
 
@@ -69,11 +71,8 @@ class ResourceCache:
                     )
 
     def cache_delete(self, fields: List = None, rebuild=False) -> int:
-        for_remove = []
         fields = fields or self.Meta.fields
-        for field in fields:
-            if field in self.get_cache_keys():
-                for_remove.append(self.get_cache_keys(field))
+        for_remove = [self.get_cache_keys(field) for field in fields if field in self.get_cache_keys()]
         total = self.cache_driver.delete(for_remove)
         if rebuild:
             self.cache_data = {}

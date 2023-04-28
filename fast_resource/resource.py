@@ -9,23 +9,15 @@ class ResourceCollection:
         self.resource = resource
 
     def to_dict(self, fields: Tuple = None) -> List[Dict]:
-        output = []
-
         if self.resource.cache_driver:
-            keys = []
-            for row in self.data:
-                item = self.resource(row)
-                keys += item.get_cache_keys().values()
-                output.append(item)
-            cache_data = Resource.cache_driver.get(list(set(keys))) or {}
-            for index, resource in enumerate(output):
-                resource.cache_data = cache_data
-                output[index] = resource.to_dict(fields=fields)
-                del resource
+            keys = set().union(*(item.get_cache_keys().values() for item in (self.resource(row) for row in self.data)))
+            cache_data = self.resource.cache_driver.get(list(keys)) or {}
+            output = [
+                resource.to_dict(fields=fields, cache_data=cache_data) for resource in
+                (self.resource(row) for row in self.data)
+            ]
         else:
-            for row in self.data:
-                item = self.resource(row)
-                output.append(item.to_dict(fields=fields))
+            output = [self.resource(row).to_dict(fields=fields) for row in self.data]
 
         return output
 
@@ -40,15 +32,15 @@ class Resource(ResourceCache):
         return hasattr(self, method) and ismethod(getattr(self, method))
 
     def _fetch_data(self, fields: Dict) -> Dict:
-        output_data = {}
-        for field in fields:
-            if field in self.get_cache_keys() \
-                    and self.get_cache_keys(field) in self._get_cache_data():
-                output_data[field] = self._get_cache_data()[self.get_cache_keys(field)]
-            elif self.__method_exists(field):
-                output_data[field] = getattr(self, field)(self.input_data)
-            elif field in self.input_data:
-                output_data[field] = self.input_data[field]
+        cache_keys = self.get_cache_keys()
+        cache_data = self._get_cache_data()
+        output_data = {
+            field: cache_data[cache_keys[field]] if field in cache_keys and cache_keys[field] in cache_data
+            else getattr(self, field)(self.input_data) if self.__method_exists(field)
+            else self.input_data[field] if field in self.input_data
+            else None
+            for field in fields
+        }
         return output_data
 
     def to_dict(self, fields: Tuple = None) -> Dict:
