@@ -32,7 +32,7 @@ class PostResource(Resource):
     def comment_count(self, input_data: Dict) -> int:
         return 10
 
-    @cache(key=lambda input_data, field: f'user1.{input_data["user_id"]}')
+    @cache(key=lambda input_data, field: f'user.{input_data["user_id"]}')
     def user(self, input_data):
         return UserResource({'id': 1, 'name': 'bagher', 'family': 'rokni'}).to_dict()
 
