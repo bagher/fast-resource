@@ -3,7 +3,7 @@ from typing import List, Dict
 from pymemcache.client.base import Client
 
 
-class MemcachedClient(Cache):
+class MemcachedCache(Cache):
     def __init__(self, memcached: Client):
         self.memcached = memcached
 
